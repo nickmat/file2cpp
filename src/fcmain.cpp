@@ -30,7 +30,7 @@
 
 using namespace std;
 
-#define VERSION   "1.0.0"
+#define VERSION   "1.0.0 active"
 #define PROGNAME  "file2cpp"
 #define COPYRIGHT "Copyright (c) 2009 - 2017 Nick Matthews"
 #ifdef _DEBUG
@@ -44,18 +44,17 @@ const char* g_progName = PROGNAME;
 const char* g_title = PROGNAME " - Version " VERSION STATUS "\n" COPYRIGHT "\n\n";
 
 bool g_verbose = false;
-bool g_svn = false;
 
 void do_usage()
 {
     cout << g_title <<
         " Usage:-\n\n"
-        "file2cpp file [-o file] [-I path] [-s] [-V]\n"
+        "file2cpp template [-o outfile] [-V]\n"
+        "file2cpp -v\n"
+        "file2cpp -h\n"
         "\n"
-        "  infile                 Input template filename, default extension .f2c\n"
+        "  template               Input template filename, default extension .f2c\n"
         "  -o [--output] outfile  Output filename. Default is infile.cpp\n"
-        "  -I [--include] path    Include path"
-        "  -s [--svn]             svn friendly\n"
         "  -V [--verbose]         Verbose, outputs program progress to stdout.\n"
         "  -v [--version]         Show version number\n"
         "  -h [--help]            Help screen - this page\n"
@@ -65,15 +64,11 @@ void do_usage()
 
 int main( int argc, char** argv )
 {
-    string tmplate, outfile, inc_path;
+    string tmplate, outfile;
     for ( int i = 1; i < argc; i++ ) {
         string option( argv[i] );
         if ( ( option == "-o" || option == "--output" ) && i < argc + 1 ) {
             outfile = argv[++i];
-        } else  if ( ( option == "-I" || option == "--include" ) && i < argc + 1 ) {
-            inc_path = argv[++i];
-        } else if ( option == "-s" || option == "--svn" ) {
-            g_svn = true;
         } else if ( option == "-V" || option == "--verbose" ) {
             g_verbose = true;
         } else if ( option == "-v" || option == "--version" ) {
@@ -88,10 +83,29 @@ int main( int argc, char** argv )
     }
     if ( tmplate.empty() ) {
         do_usage();
+        cout << "Input template filename is required.\n\n";
         return 1;
     }
-    process_tmplate( tmplate, outfile, inc_path );
+    if ( g_verbose ) {
+        cout << g_title;
+    }
+
+    try {
+        process_tmplate( tmplate, outfile );
+    } catch ( std::exception& e ) {
+        std::cerr << "error: " << e.what() << "\n";
+        return 1;
+    } catch ( ... ) {
+        std::cerr << "Exception of unknown type!\n";
+        return 1;
+    }
+
     return 0;
 }
 
-// End of src/wpl/main.cpp
+bool is_postfix_terminator( int ch )
+{
+    return isspace( ch ) || ch == ';' || ch == ',';
+}
+
+// End of src/fcmain.cpp

@@ -27,13 +27,26 @@
 #define SRC_FCMAIN_H_GUARD
 
 #include <string>
+#include <ostream>
 
+enum SkipType {
+    SKIP_NONE,
+    SKIP_DATA,
+    SKIP_TEXT_BEG,
+    SKIP_TEXT_END,
+    SKIP_TEXT_POST
+};
+
+extern const char* g_version;
 extern bool g_verbose;
-extern bool g_svn;
+
+// See fcmain.cpp file
+bool is_postfix_terminator( int ch );
 
 // See fctmplate.cpp file
-void process_tmplate( const std::string& tmplate, const std::string& outfile, const std::string& inc_path );
+void process_tmplate( const std::string& tmplate, const std::string& outfile );
 
-
+// See fcwrite.cpp file
+SkipType do_at_command( std::ostream& os, std::string::const_iterator it, std::string::const_iterator end );
 
 #endif // SRC_FCMAIN_H_GUARD
