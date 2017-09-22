@@ -1,0 +1,7 @@
+/* A test of @{test.txt} and @(rc)L"test.txt" files */
+
+unsigned char test_txt[] = @{test.txt};
+
+size_t sizeof_test_txt = sizeof(test_txt);
+
+const wchar_t* test = @(rc.c)L"test.txt";

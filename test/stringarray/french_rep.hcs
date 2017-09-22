@@ -1,0 +1,30 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Name:        scripts/french_rep.hcs
+ * Project:     Cal: Programmable Historical Calendar library.
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*/
+
+vocab frm {
+    name "Month names";
+    fieldname month;
+    lang en;
+    pseudo    Month,  Mon;
+    tokens {
+        1, "Vendémiaire",      "Vend";
+        2, "Brumaire",         "Brum";
+        3, "Frimaire",         "Frim";
+        4, "Nivôse",           "Nivo";
+        5, "Pluviôse",         "Pluv";
+        6, "Ventôse",          "Vent";
+        7, "Germinal",         "Germ";
+        8, "Floréal",          "Flor";
+        9, "Prairial",         "Prai";
+        10, "Messidor",        "Mess";
+        11, "Thermidor",       "Ther";
+        12, "Fructidor",       "Fruc";
+        13, "Complémentaires", "Comp";
+    }
+}
+
+
+// End of scripts/french_rep.hcs file

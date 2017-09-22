@@ -1,0 +1,18 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Name:        test/caldefscripts.template
+ * Project:     file2cpp: Convert text and binary files to C/C++ code.
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+*/
+
+#include "caldefscripts.h"
+
+const char* Cal::cal_default_scripts[] = {
+    @(crl.cpp)"jdn.hcs",
+    @(crl.cpp)"julian.hcs",
+    @(crlo.cpp)"french_rep.hcs"
+};
+
+size_t Cal::cal_default_scripts_size = sizeof(Cal::cal_default_scripts) / sizeof(char*);
+
+// End of src/cal/caldefscripts.cpp file
