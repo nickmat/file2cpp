@@ -30,7 +30,7 @@
 
 using namespace std;
 
-#define VERSION   "1.0.0 active"
+#define VERSION   "1.0.0"
 #define PROGNAME  "file2cpp"
 #define COPYRIGHT "Copyright (c) 2009 - 2017 Nick Matthews"
 #ifdef _DEBUG
@@ -54,7 +54,7 @@ void do_usage()
         "file2cpp -h\n"
         "\n"
         "  template               Input template filename, default extension .f2c\n"
-        "  -o [--output] outfile  Output filename. Default is infile.cpp\n"
+        "  -o [--output] outfile  Output filename. Default is template-name.cpp\n"
         "  -V [--verbose]         Verbose, outputs program progress to stdout.\n"
         "  -v [--version]         Show version number\n"
         "  -h [--help]            Help screen - this page\n"

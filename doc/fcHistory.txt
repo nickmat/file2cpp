@@ -3,11 +3,12 @@
 
    Revision History
    ~~~~~~~~~~~~~~~~
- active  v1.0.0
+23sep17  v1.0.0
     Rewrite removing wxWidgets library and using the boost filesystem library.
     Removed -s and -I command line switches and their operations.
     Changed -v command line switch to -V (or --verbose).
     Added -v (or --version) command line switch which outputs version number.
+    Text file switch 'p' added to pack multiple spaces to single space.
     Now released under the Boost License (see licence.txt). 
    
  9dec14  v0.5.0

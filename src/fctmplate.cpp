@@ -37,12 +37,12 @@ void create_output( istream& ts, ostream& os )
 {
     bool inLComment = false, inCComment = false, inSQuote = false, inDQuote = false;
     bool extendLine = false;
-    string line, out;
+    string line;
     while ( !ts.eof() ) {
         getline( ts, line );
         SkipType skip = SKIP_NONE;
         auto end = line.end();
-
+        string out( "\n" );
         for ( auto it = line.begin(); it != end; it++ ) {
             if ( skip != SKIP_NONE ) {
                 if ( skip == SKIP_DATA && *it == '}' ) skip = SKIP_NONE;
@@ -137,7 +137,6 @@ void create_output( istream& ts, ostream& os )
                 inDQuote = true;
             }
         }
-        out += '\n';
         os << out;
         out.clear();
         if ( extendLine ) {
@@ -176,8 +175,8 @@ void process_tmplate( const string& tmplate, const string& outfile )
         cout << "Creating output file " << opath << ".\n";
     }
 
-    ofile << "/* " << opath.filename() <<
-        " - File created by file2cpp " << g_version << " */\n\n";
+    ofile << "/* " << opath.generic_string() <<
+        " - File created by file2cpp " << g_version << " */\n";
     create_output( tfile, ofile );
 
     tfile.close();

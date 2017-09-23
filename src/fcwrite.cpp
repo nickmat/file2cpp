@@ -43,8 +43,13 @@ enum FileComment {
 };
 
 struct TextMod {
+    TextMod() :
+        trimR( false ), trimL( false ), pack( false ), mline( false ),
+        compact( false ), octal( false ), remove( FCOMMENT_NONE ) {}
+
     bool        trimR;
     bool        trimL;
+    bool        pack;
     bool        mline;
     bool        compact;
     bool        octal;
@@ -210,23 +215,30 @@ void output_text( const string& fname, ostream& os, const TextMod& mod )
             if ( lookDQuote && !inSQuote && *it == '"' ) {
                 inDQuote = inDQuote ? false : true;
             }
-            if ( ignoreC && *it == '/' && !inDQuote && !inSQuote ) {
-                if ( compare_str( it, end, "/*" ) == true ) {
-                    skipC = true;
-                    continue;
+            if ( !inDQuote && !inSQuote ) {
+                if ( ignoreC && *it == '/' ) {
+                    if ( compare_str( it, end, "/*" ) == true ) {
+                        skipC = true;
+                        continue;
+                    }
+                    if ( compare_str( it, end, "//" ) == true ) {
+                        break;
+                    }
                 }
-                if ( compare_str( it, end, "//" ) == true ) {
+                if ( ignoreXml && *it == '<' ) {
+                    if ( compare_str( it, end, "<!--" ) == true ) {
+                        skipXml = true;
+                        continue;
+                    }
+                }
+                if ( ignoreTcl && *it == '#' ) {
                     break;
                 }
-            }
-            if ( ignoreXml && *it == '<' && !inDQuote && !inSQuote ) {
-                if ( compare_str( it, end, "<!--" ) == true ) {
-                    skipXml = true;
-                    continue;
+                if ( mod.pack && *it == ' ' ) {
+                    while ( ( it + 1 ) != end && *( it + 1 ) == ' ' ) {
+                        it++;
+                    }
                 }
-            }
-            if ( ignoreTcl && *it == '#' && !inDQuote && !inSQuote ) {
-                break;
             }
             int ch = unsigned char( *it );
             if ( ch > 127 && mod.octal ) {
@@ -235,24 +247,30 @@ void output_text( const string& fname, ostream& os, const TextMod& mod )
                 out += ch;
             }
         }
-        if ( mod.trimR ) out = right_trim( out );
+        if ( mod.trimR ) {
+            out = right_trim( out );
+        }
         if ( mod.compact && out.empty() ) {
             continue;
         }
         if ( mod.mline && out.empty() ) {
-            if ( emptyblock ) continue;
+            if ( emptyblock ) {
+                continue; 
+            }
             emptyblock = true;
         } else {
             emptyblock = false;
         }
-        if ( mod.trimL ) out = left_trim( out );
+        if ( mod.trimL ) {
+            out = left_trim( out );
+        }
         os << "\n " << mod.prefix << "\"" << out << "\\n\"" << mod.postfix;
     }
 }
 
 SkipType do_at_command( std::ostream& os, std::string::const_iterator it, std::string::const_iterator end )
 {
-    TextMod  mod = { false, false, false, false, false, FCOMMENT_NONE };
+    TextMod  mod;
     string fname;
     char exitch;
 
@@ -262,10 +280,14 @@ SkipType do_at_command( std::ostream& os, std::string::const_iterator it, std::s
     } else {
         if ( *it == '(' ) {
             // Trim text file content specifier
+            bool done = false;
             while ( ++it != end ) {
                 if ( *it == ')' ) {
                     it++;
                     break;
+                }
+                if ( done ) {
+                    continue;
                 }
                 switch ( *it ) {
                 case 'r':
@@ -273,6 +295,11 @@ SkipType do_at_command( std::ostream& os, std::string::const_iterator it, std::s
                     break;
                 case 'l':
                     mod.trimL = true;
+                    break;
+                case 'p':
+                    mod.trimR = true;
+                    mod.trimL = true;
+                    mod.pack = true;
                     break;
                 case 'm':
                     mod.mline = true;
@@ -284,19 +311,20 @@ SkipType do_at_command( std::ostream& os, std::string::const_iterator it, std::s
                     mod.octal = true;
                     break;
                 case '.':
-                    if ( compare_str( it, end, ".c" ) ) {
+                    if ( compare_str( it, end, ".cpp" ) ) {
+                        mod.remove = FCOMMENT_CPP;
+                        it += 3;
+                    } else if ( compare_str( it, end, ".c" ) ) {
                         mod.remove = FCOMMENT_C;
                         it++;
-                    } else if ( compare_str( it, end, ".cpp" ) ) {
-                        mod.remove = FCOMMENT_CPP;
+                    } else if ( compare_str( it, end, ".tcl" ) ) {
+                        mod.remove = FCOMMENT_TCL;
                         it += 3;
                     } else if ( compare_str( it, end, ".xml" ) ) {
                         mod.remove = FCOMMENT_XML;
                         it += 3;
-                    } else if ( compare_str( it, end, ".tcl" ) ) {
-                        mod.remove = FCOMMENT_TCL;
-                        it += 3;
                     }
+                    done = true;
                     break;
                 }
             }
