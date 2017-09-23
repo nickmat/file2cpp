@@ -1,4 +1,4 @@
-# file2cpp - Utility Program
+# file2cpp Version 1.0.0 - Utility Program
 
 The program is used to insert binary and or text files into a c or c++ source file.
 It does this using a template file containing c/c++ code but with file-names where the file contents are required.
@@ -75,7 +75,7 @@ Files are processed in the following order:
 1. Compact blank lines
 1. Left trim
 
-####Example
+### Example
 Template File `test.f2c`
 ```
 /* A test of @{test.txt} and @(rc.c)L"test.txt" files */
